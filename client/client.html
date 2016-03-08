@@ -5,11 +5,20 @@
 		body
 		{
 			background-color: lightgrey;
+			width: 50%;
+			margin: auto;
 		}
 		
 		canvas
 		{
 			background-color: white;
+			margin: auto;
+			display: block;
+		}
+		
+		h1
+		{
+			text-align: center;
 		}
 	</style>
     <script src="/socket.io/socket.io.js"></script>
@@ -129,7 +138,6 @@
 			{
 				squares = data.data;
 				flag = data.flag;
-				console.log("flag set "+data.flag);
 				redraw();
 			});
 			
@@ -210,6 +218,7 @@
     </script>
 </head>
 <body>
+	<h1>Capture the Flag!</h1>
     <canvas id="canvas" height="500" width="500">Please use an HTML 5 browser</canvas>
 </body>
 </html>
