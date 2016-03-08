@@ -89,7 +89,15 @@ io.on("connection", function(socket)
 			flag: flag
 		};
 		
+		var pointMessage = 
+		{
+			message: "",
+			data: points,
+			flag: flag
+		};
+		
 		io.sockets.in("room1").emit("allSquares", message);
+		io.sockets.in("room1").emit("updatePoints", pointMessage);
 	});
 	
 	socket.on("updatePos", function(data)

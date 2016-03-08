@@ -13,7 +13,12 @@
 		{
 			background-color: white;
 			margin: auto;
-			display: block;
+			float: left;
+		}
+		
+		textarea
+		{
+			float: right;
 		}
 		
 		h1
@@ -29,6 +34,7 @@
         var ctx;
         var socket;
 		var squares = {};
+		var allPoints = {};
 		var points = 0;
 		var flag = {};
 		var animationID;
@@ -36,6 +42,7 @@
 		var aIsPressed = false;
 		var sIsPressed = false;
 		var dIsPressed = false;
+		var area;
 
         var square = {
             id: new Date().getTime(),
@@ -52,6 +59,7 @@
 		{
 			ctx.clearRect(0,0,canvas.width, canvas.height);
 			var key = Object.keys(squares);
+			var html = "";
 			
 			ctx.fillStyle = flag.color;
 			ctx.beginPath();
@@ -63,14 +71,12 @@
 			{
 				ctx.fillStyle = squares[key[i]].color;
 				ctx.fillRect(squares[key[i]].x, squares[key[i]].y, squares[key[i]].width, squares[key[i]].height);
-				if(squares[key[i]].id == square.id)
-				{
-					
-				}
+				html += "Color: "+squares[key[i]].color+" Score: " + allPoints[squares[key[i]].id] + "\n";
 			}
 			
 			ctx.fillStyle = "black";
 			ctx.fillText("Score: " + square.points, 10, 20);
+			area.innerHTML = html;
 		}
 		
 		function update()
@@ -120,11 +126,15 @@
             canvas = document.querySelector("#canvas");
             ctx = canvas.getContext("2d");
 			
+			area = document.querySelector("textarea");
+			
 			ctx.font = "20px Arial";
 			
 			socket = io.connect();
 			socket.on("connect", function()
 			{
+				allPoints[square.id] = 0;
+				
 				var message = 
 				{
 					message: "",
@@ -145,10 +155,11 @@
 			{
 				console.log("points " + data.data[square.id]);
 				
-				if(data.data[square.id] > square.points)
+				if(data.data[square.id] >= square.points)
 				{
 					squares = data.data;
 					square.points = data.data[square.id];
+					allPoints = data.data;
 				}
 				flag = data.flag;
 			});
@@ -220,5 +231,6 @@
 <body>
 	<h1>Capture the Flag!</h1>
     <canvas id="canvas" height="500" width="500">Please use an HTML 5 browser</canvas>
+	<textarea rows="33" cols="50"></textarea>
 </body>
 </html>
