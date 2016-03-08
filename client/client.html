@@ -134,10 +134,12 @@
 			
 			socket.on("updatePoints", function(data)
 			{
-				console.log("points " + data.data);
+				console.log("points " + data.data[square.id].points);
+				
 				if(data.data[square.id].points > square.points)
 				{
 					squares = data.data;
+					square.points = data.data[square.id].points;
 				}
 				flag = data.flag;
 			});
