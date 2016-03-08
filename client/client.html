@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<style>
+		body
+		{
+			background-color: lightgrey;
+		}
+		
+		canvas
+		{
+			background-color: white;
+		}
+	</style>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         "use strict";
@@ -9,6 +20,8 @@
         var ctx;
         var socket;
 		var squares = {};
+		var points = 0;
+		var flag = {};
 		var animationID;
 		var wIsPressed = false;
 		var aIsPressed = false;
@@ -20,9 +33,10 @@
 			time: new Date().getTime(),
             x: Math.random()*400,
             y: Math.random()*400,
-            height: 100,
-            width: 100,
-			color: "rgba("+Math.floor(Math.random()*255)+", "+Math.floor(Math.random()*255)+", "+Math.floor(Math.random()*255)+", 1)"
+            height: 20,
+            width: 20,
+			color: "rgba("+Math.floor(Math.random()*255)+", "+Math.floor(Math.random()*255)+", "+Math.floor(Math.random()*255)+", 1)",
+			points: 0
         };
 		
 		function redraw()
@@ -30,10 +44,22 @@
 			ctx.clearRect(0,0,canvas.width, canvas.height);
 			var key = Object.keys(squares);
 			
+			ctx.fillStyle = flag.color;
+			ctx.beginPath();
+			ctx.arc(flag.x, flag.y, flag.radius, 0, 2*Math.PI);
+			ctx.fill();
+			ctx.closePath();
+			
 			for(var i = 0;i<key.length;i++)
 			{
 				ctx.fillStyle = squares[key[i]].color;
 				ctx.fillRect(squares[key[i]].x, squares[key[i]].y, squares[key[i]].width, squares[key[i]].height);
+				if(squares[key[i]].id == square.id)
+				{
+					ctx.fillStyle = "black";
+					ctx.fillText("Score: " + squares[key[i]].points, 10, 20);
+					square.points = squares[key[i]].points;
+				}
 			}
 		}
 		
@@ -84,6 +110,8 @@
             canvas = document.querySelector("#canvas");
             ctx = canvas.getContext("2d");
 			
+			ctx.font = "20px Arial";
+			
 			socket = io.connect();
 			socket.on("connect", function()
 			{
@@ -99,7 +127,16 @@
 			socket.on("allSquares", function(data)
 			{
 				squares = data.data;
+				flag = data.flag;
+				console.log("flag set "+data.flag);
 				redraw();
+			});
+			
+			socket.on("updatePoints", function(data)
+			{
+				console.log("points " + data.data);
+				squares = data.data;
+				flag = data.flag;
 			});
 			
 			document.onkeydown = function(e)
