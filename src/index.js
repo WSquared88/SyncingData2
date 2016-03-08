@@ -6,6 +6,7 @@ var PORT = process.env.PORT || process.env.NODE_PORT || 3000;
 app.listen(PORT);
 
 var squares = {};
+var points = {};
 
 var flag = 
 {
@@ -51,16 +52,18 @@ function checkCollision(id)
 		return;
 	}
 	
-	squares[id].points += 1;
+	console.log("before points " + points[id]);
+	points[id] += 1;
+	console.log("after points " + points[id]);
+	
+	moveFlag();
 	
 	var message = 
 	{
 		message: "",
-		data: squares,
+		data: points,
 		flag: flag
 	};
-	
-	moveFlag();
 	
 	io.sockets.in("room1").emit("updatePoints", message);
 }
@@ -77,8 +80,8 @@ io.on("connection", function(socket)
 	
 	socket.on("init", function(data)
 	{
-		console.log(flag);
 		squares[data.id] = data.data;
+		points[data.id] = 0;
 		var message = 
 		{
 			message: "",

@@ -56,11 +56,12 @@
 				ctx.fillRect(squares[key[i]].x, squares[key[i]].y, squares[key[i]].width, squares[key[i]].height);
 				if(squares[key[i]].id == square.id)
 				{
-					ctx.fillStyle = "black";
-					ctx.fillText("Score: " + squares[key[i]].points, 10, 20);
-					square.points = squares[key[i]].points;
+					
 				}
 			}
+			
+			ctx.fillStyle = "black";
+			ctx.fillText("Score: " + square.points, 10, 20);
 		}
 		
 		function update()
@@ -134,12 +135,12 @@
 			
 			socket.on("updatePoints", function(data)
 			{
-				console.log("points " + data.data[square.id].points);
+				console.log("points " + data.data[square.id]);
 				
-				if(data.data[square.id].points > square.points)
+				if(data.data[square.id] > square.points)
 				{
 					squares = data.data;
-					square.points = data.data[square.id].points;
+					square.points = data.data[square.id];
 				}
 				flag = data.flag;
 			});
